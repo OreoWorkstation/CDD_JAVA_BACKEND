@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan(value = "ink.scotty.cdd.mapper")
+@MapperScan(value = "ink.scotty.cdd.dao")
 public class CddApplication {
 
     public static void main(String[] args) {

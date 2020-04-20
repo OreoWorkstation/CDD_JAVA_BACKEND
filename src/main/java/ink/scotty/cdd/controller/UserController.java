@@ -1,55 +1,87 @@
 package ink.scotty.cdd.controller;
 
-import ink.scotty.cdd.pojo.User;
+
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.ApiController;
+import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import ink.scotty.cdd.entity.User;
 import ink.scotty.cdd.service.UserService;
-import ink.scotty.cdd.util.JsonResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.List;
 
-@CrossOrigin
+/**
+ * (User)表控制层
+ *
+ * @author Scott
+ * @since 2020-04-20 18:51:51
+ */
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("user")
+public class UserController extends ApiController {
+    /**
+     * 服务对象
+     */
+    @Resource
+    private UserService userService;
 
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    JsonResponse jsonResponse;
-
-
-    @GetMapping("/login")
-    public JsonResponse login(@RequestParam("account") String account,
-                      @RequestParam("password") String password) {
-
-        User user = userService.login(account, password);
-        if (user == null) {
-            return jsonResponse.setError("Login fail");
-        }
-        return jsonResponse.setSuccess(user);
+    /**
+     * 分页查询所有数据
+     *
+     * @param page 分页对象
+     * @param user 查询实体
+     * @return 所有数据
+     */
+    @GetMapping
+    public R<?> selectAll(Page<User> page, User user) {
+        return success(this.userService.page(page, new QueryWrapper<>(user)));
     }
 
-    @DeleteMapping
-    public JsonResponse deleteUser(@RequestBody Map<String, Integer> request) {
-        int userId = request.get("userId");
-        userService.deleteUser(userId);
-        return jsonResponse.setSuccess("delete successfully");
+    /**
+     * 通过主键查询单条数据
+     *
+     * @param id 主键
+     * @return 单条数据
+     */
+    @GetMapping("{id}")
+    public R<?> selectOne(@PathVariable Serializable id) {
+        return success(this.userService.getById(id));
     }
 
-    @PostMapping("/register")
-    public JsonResponse register(@RequestBody User user) {
-        User newUser = userService.register(user);
-        if (newUser == null) return jsonResponse.setError("register fail");
-        return jsonResponse.setSuccess(newUser);
+    /**
+     * 新增数据
+     *
+     * @param user 实体对象
+     * @return 新增结果
+     */
+    @PostMapping
+    public R<?> insert(@RequestBody User user) {
+        return success(this.userService.save(user));
     }
 
+    /**
+     * 修改数据
+     *
+     * @param user 实体对象
+     * @return 修改结果
+     */
     @PutMapping
-    public JsonResponse updateUserInfo(@RequestBody User user) {
-        userService.updateUserInfo(user);
-//        dataMap.put("")
-        return jsonResponse.setSuccess("update successfully");
+    public R<?> update(@RequestBody User user) {
+        return success(this.userService.updateById(user));
+    }
 
+    /**
+     * 删除数据
+     *
+     * @param idList 主键结合
+     * @return 删除结果
+     */
+    @DeleteMapping
+    public R<?> delete(@RequestParam("idList") List<Long> idList) {
+        return success(this.userService.removeByIds(idList));
     }
 }
