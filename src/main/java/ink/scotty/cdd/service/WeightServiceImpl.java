@@ -48,8 +48,8 @@ public class WeightServiceImpl implements WeightService {
         // 获取最新体重的ID
         weightMapper.updateWeight(weight);
         int latestWeightId = weightMapper.getLatestWeightId(weight.getPetId());
-        if (weight.getId() == latestWeightId) {
-            petMapper.updatePetWeight(weight.getPetId(), weight.getWeightValue());
-        }
+//        if (weight.getId() != latestWeightId) {
+            petMapper.updatePetWeight(weight.getPetId(), weightMapper.getWeightValue(latestWeightId));
+//        }
     }
 }
