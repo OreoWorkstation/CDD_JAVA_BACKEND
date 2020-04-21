@@ -22,3 +22,9 @@ CREATE TABLE `user`  (
   `update_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES (1, 'test001', 'test001', 'user001', 0, 'https://images.unsplash.com/photo-1488161628813-04466f872be2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80', 'You have a dream, you got to protect it.', 'user001@email.com', '13396429603', '山东省-青岛市', '2020-04-20 13:33:00', 2, 0, 0, 0, '2020-04-20 13:33:00', '2020-04-20 13:37:23');
+INSERT INTO `user` VALUES (2, 'test002', 'test002', 'user002', 1, 'https://images.unsplash.com/photo-1488161628813-04466f872be2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80', 'You have a dream, you got to protect it.', 'user002@email.com', '13396429601', '山东省-青岛市', '2020-04-20 13:33:32', 2, 0, 0, 0, '2020-04-20 13:33:32', '2020-04-20 13:37:27');
