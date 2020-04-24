@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for weight
 -- ----------------------------
-DROP TABLE IF EXISTS `weight`;
-CREATE TABLE `weight`  (
+DROP TABLE IF EXISTS `t_weight`;
+CREATE TABLE `t_weight`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `pet_id` bigint(20) NOT NULL COMMENT '宠物ID',
   `weight_value` decimal(10, 1) NOT NULL DEFAULT 0.0 COMMENT '体重值',

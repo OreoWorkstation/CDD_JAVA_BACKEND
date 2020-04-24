@@ -6,8 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import ink.scotty.cdd.entity.Fans;
 import ink.scotty.cdd.entity.Follow;
+import ink.scotty.cdd.entity.User;
+import ink.scotty.cdd.service.FansService;
 import ink.scotty.cdd.service.FollowService;
+import ink.scotty.cdd.service.UserService;
+import org.springframework.expression.spel.ast.QualifiedIdentifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,6 +23,7 @@ import java.util.List;
  * (Follow)表控制层
  *
  * @author Scott
+ * @author Kai
  * @since 2020-04-21 22:40:30
  */
 @RestController
@@ -28,7 +34,10 @@ public class FollowController extends ApiController {
      */
     @Resource
     private FollowService followService;
-
+    @Resource
+    private UserService userService;
+    @Resource
+    private FansService fansService;
     /**
      * 分页查询所有数据
      *
@@ -58,10 +67,10 @@ public class FollowController extends ApiController {
      * @param follow 实体对象
      * @return 新增结果
      */
-    @PostMapping
-    public R<?> insert(@RequestBody Follow follow) {
-        return success(this.followService.save(follow));
-    }
+//    @PostMapping
+//    public R<?> insert(@RequestBody Follow follow) {
+//        return success(this.followService.save(follow));
+//    }
 
     /**
      * 修改数据
@@ -83,5 +92,47 @@ public class FollowController extends ApiController {
     @DeleteMapping
     public R<?> delete(@RequestParam("idList") List<Long> idList) {
         return success(this.followService.removeByIds(idList));
+    }
+
+    /**
+     * 关注
+     * @param follow
+     * @return
+     */
+    @PostMapping
+    public R<?> Follow(@RequestBody Follow follow) {
+        QueryWrapper<Follow> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", follow.getUserId())
+                .eq("followed_id", follow.getFollowedId());
+        QueryWrapper<Fans> fansQueryWrapper = new QueryWrapper<>();
+        fansQueryWrapper.eq("user_id", follow.getFollowedId())
+                .eq("fans_id", follow.getUserId());
+
+        int cnt = this.followService.count(queryWrapper);
+        boolean flag, flag2;
+        Fans fans = new Fans();
+        fans.setUserId(follow.getFollowedId());
+        fans.setFansId(follow.getUserId());
+
+        if(cnt == 0){   //未关注
+            flag = this.followService.save(follow);
+            flag2 = this.fansService.save(fans);
+        }else{  //已关注
+            flag = this.followService.remove(queryWrapper);
+            flag2 = this.fansService.remove(fansQueryWrapper);
+        }
+        int n = (cnt == 0 ? 1 : -1);
+        if(flag == true && flag2 == true){
+            User user = this.userService.getById(follow.getUserId()); //增加follow_number
+            user.setFollowNumber(user.getFollowNumber() + n);
+            this.userService.updateById(user);
+
+            User followed = this.userService.getById(follow.getFollowedId());
+            followed.setFansNumber(followed.getFansNumber() + n);
+            this.userService.updateById(followed);
+            return success(true);
+        }else{
+            return success(false);
+        }
     }
 }

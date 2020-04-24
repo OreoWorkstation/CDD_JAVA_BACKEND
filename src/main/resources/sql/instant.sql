@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for instant
 -- ----------------------------
-DROP TABLE IF EXISTS `instant`;
-CREATE TABLE `instant`  (
+DROP TABLE IF EXISTS `t_instant`;
+CREATE TABLE `t_instant`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` bigint(20) NOT NULL COMMENT '发布者ID',
   `content` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '内容',

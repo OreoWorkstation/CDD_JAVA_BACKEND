@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for diary
 -- ----------------------------
-DROP TABLE IF EXISTS `diary`;
-CREATE TABLE `diary`  (
+DROP TABLE IF EXISTS `t_diary`;
+CREATE TABLE `t_diary`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `pet_id` bigint(20) NOT NULL COMMENT '宠物ID',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '日记标题',

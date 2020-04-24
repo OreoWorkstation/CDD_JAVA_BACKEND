@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for photo
 -- ----------------------------
-DROP TABLE IF EXISTS `photo`;
-CREATE TABLE `photo`  (
+DROP TABLE IF EXISTS `t_photo`;
+CREATE TABLE `t_photo`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `pet_id` bigint(20) NOT NULL COMMENT '宠物ID',
   `photo_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '图片路径',

@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for cost
 -- ----------------------------
-DROP TABLE IF EXISTS `cost`;
-CREATE TABLE `cost`  (
+DROP TABLE IF EXISTS `t_cost`;
+CREATE TABLE `t_cost`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `pet_id` bigint(20) NOT NULL COMMENT '宠物ID',
   `cost_content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '消费内容',
