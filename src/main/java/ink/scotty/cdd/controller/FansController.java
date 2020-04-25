@@ -18,6 +18,7 @@ import java.util.List;
  * (Fans)表控制层
  *
  * @author Scott
+ * @author Kai
  * @since 2020-04-21 22:40:19
  */
 @RestController

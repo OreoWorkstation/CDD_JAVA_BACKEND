@@ -1,6 +1,8 @@
 package ink.scotty.cdd.entity;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -10,9 +12,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
  * (User)表实体类
  *
  * @author Scott
+ * @author Kai
  * @since 2020-04-21 22:41:13
  */
 @SuppressWarnings("serial")
+@TableName(value="t_user")
 public class User extends Model<User> {
     @TableId(type = IdType.AUTO)
     //主键

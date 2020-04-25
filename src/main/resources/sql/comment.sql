@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for comment
 -- ----------------------------
-DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment`  (
+DROP TABLE IF EXISTS `t_comment`;
+CREATE TABLE `t_comment`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `instant_id` bigint(20) NOT NULL COMMENT '动态ID',
   `user_id` bigint(20) NOT NULL COMMENT '评论者ID',

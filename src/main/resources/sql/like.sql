@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for like
 -- ----------------------------
-DROP TABLE IF EXISTS `like`;
-CREATE TABLE `like`  (
+DROP TABLE IF EXISTS `t_like`;
+CREATE TABLE `t_like`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `instant_id` bigint(20) NOT NULL COMMENT '动态ID',
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',

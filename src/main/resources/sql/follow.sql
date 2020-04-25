@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for follow
 -- ----------------------------
-DROP TABLE IF EXISTS `follow`;
-CREATE TABLE `follow`  (
+DROP TABLE IF EXISTS `t_follow`;
+CREATE TABLE `t_follow`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `followed_id` bigint(20) NOT NULL COMMENT '被关注者ID',

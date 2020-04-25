@@ -1,8 +1,8 @@
 -- ----------------------------
 -- Table structure for fans
 -- ----------------------------
-DROP TABLE IF EXISTS `fans`;
-CREATE TABLE `fans`  (
+DROP TABLE IF EXISTS `t_fans`;
+CREATE TABLE `t_fans`  (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   `user_id` bigint(20) NOT NULL COMMENT '用户ID',
   `fans_id` bigint(20) NOT NULL COMMENT '粉丝ID',
