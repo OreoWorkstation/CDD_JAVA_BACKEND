@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -145,7 +146,12 @@ public class UserController extends ApiController {
      * 5. 获取关注的人列表
      */
     @GetMapping("user/{user_id}/follow")
-    public R<?> getFollowList(@PathVariable("user_id") Serializable UserId){
+    public R<?> getFollowList(@PathVariable("user_id") Long UserId){
+        List<UserInfoDTO> list = getFollows(UserId);
+        return success(list);
+    }
+
+    public List<UserInfoDTO> getFollows(Long UserId){
         QueryWrapper<Follow> wrapper = new QueryWrapper<>();
         wrapper.eq("user_id", UserId);
         List<Follow> follows = this.followService.list(wrapper);
@@ -154,7 +160,7 @@ public class UserController extends ApiController {
             User user = this.userService.getById(follow.getFollowedId());
             ret.add(getUserInfoDto(user));
         }
-        return success(ret);
+        return ret;
     }
 
     /**
@@ -186,7 +192,7 @@ public class UserController extends ApiController {
     }
 
     /**
-     *
+     * 获取用户空间信息
      * @param UserId
      * @return
      */
@@ -200,7 +206,6 @@ public class UserController extends ApiController {
         userZoneDTO.setGender(user.getGender());
         userZoneDTO.setNickname(user.getNickname());
 
-
         QueryWrapper<Instant> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("create_time");
         List<Instant> list = this.instantService.list(wrapper);
@@ -212,6 +217,8 @@ public class UserController extends ApiController {
         userZoneDTO.setInstantDTOList(res);
         return success(userZoneDTO);
     }
+
+
 
     private InstantDTO getInstantDTO(Instant instant, Long userId){
         InstantDTO instantDTO = new InstantDTO();
@@ -229,6 +236,3 @@ public class UserController extends ApiController {
         return instantDTO;
     }
 }
-
-//    // 用户动态列表
-//    List<InstantDTO> instantDTOList;
