@@ -8,12 +8,14 @@ import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ink.scotty.cdd.dto.InstantDTO;
+import ink.scotty.cdd.dto.UserInfoDTO;
 import ink.scotty.cdd.entity.Instant;
 import ink.scotty.cdd.entity.Like;
 import ink.scotty.cdd.entity.User;
 import ink.scotty.cdd.service.InstantService;
 import ink.scotty.cdd.service.LikeService;
 import ink.scotty.cdd.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -40,6 +42,8 @@ public class InstantController extends ApiController {
     private UserService userService;
     @Resource
     private LikeService likeService;
+    @Autowired
+    private UserController userController;
 
     /**
      * 分页查询所有数据
@@ -137,17 +141,26 @@ public class InstantController extends ApiController {
     /**
      * 4. 获取关注的人的动态列表
      * @param userId 登陆用户id
-     * @param followId  关注用户id
      * @return
      */
     @GetMapping("follow")
-    public R<?> getFollowInstantList(@RequestParam("user_id") Long userId, @RequestParam("follow_id") Long followId) {
+    public R<?> getFollowInstantList(@RequestParam("user_id") Long userId) {
+        List<UserInfoDTO> dtoList = userController.getFollows(userId);
+        List<Long> useridlist = new ArrayList<>();
+        for(UserInfoDTO userInfoDTO: dtoList){
+            useridlist.add(userInfoDTO.getUserId());
+        }
+        List<InstantDTO> res = new ArrayList<>();
+        if(useridlist.size() == 0){
+            return success(res);
+        }
+
         QueryWrapper<Instant> wrapper = new QueryWrapper<>();
         wrapper
-                .eq("user_id", followId)
+                .in("user_id", useridlist)
                 .orderByDesc("create_time");
         List<Instant> list = this.instantService.list(wrapper);
-        List<InstantDTO> res = new ArrayList<>();
+
         for(Instant i: list){
             InstantDTO instantDTO = getInstantDTO(i, userId);
             res.add(instantDTO);

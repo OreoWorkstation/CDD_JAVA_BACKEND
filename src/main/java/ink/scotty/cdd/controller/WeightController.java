@@ -113,9 +113,15 @@ public class WeightController extends ApiController {
                 .eq("pet_id", weight.getPetId())
                 .orderByDesc("create_time");
         List<Weight> weights = weightService.list(wrapper);
-
+//        for(Weight weighti: weights){
+//            System.out.println("############################" + weighti.getWeightValue());
+//        }
         Pet pet = petService.getById(weight.getPetId());
-        pet.setWeight(weights.get(0).getWeightValue());
+        if(weights.size() == 0){
+            pet.setWeight(0.0);
+        }else{
+            pet.setWeight(weights.get(0).getWeightValue());
+        }
         petService.updateById(pet);
     }
 
