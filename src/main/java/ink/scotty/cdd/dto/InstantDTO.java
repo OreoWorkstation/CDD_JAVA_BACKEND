@@ -15,8 +15,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InstantDTO {
 
-    // Instant 类
-    private Instant instant;
+    // 发布者姓名
+    private String nickname;
+    // 发布者头像
+    private String avatar;
     // 0: 未点赞 1：已点赞
     private Integer status;
+    // Instant 类
+    private Instant instant;
+
 }

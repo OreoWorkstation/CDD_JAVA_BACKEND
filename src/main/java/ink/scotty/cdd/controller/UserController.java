@@ -198,15 +198,18 @@ public class UserController extends ApiController {
      */
     @GetMapping("user/{user_id}/zone")
     public R<?> getUserZoneById(@PathVariable("user_id") Long UserId){
+
         UserZoneDTO userZoneDTO = new UserZoneDTO();
         User user = this.userService.getById(UserId);
         userZoneDTO.setUserId(user.getId());
         userZoneDTO.setAddress(user.getAddress());
+        userZoneDTO.setIntroduction(user.getIntroduction());
         userZoneDTO.setAvatar(user.getAvatar());
         userZoneDTO.setGender(user.getGender());
         userZoneDTO.setNickname(user.getNickname());
 
         QueryWrapper<Instant> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", UserId);
         wrapper.orderByDesc("create_time");
         List<Instant> list = this.instantService.list(wrapper);
         List<InstantDTO> res = new ArrayList<>();
@@ -233,6 +236,9 @@ public class UserController extends ApiController {
         }else{
             instantDTO.setStatus(1);
         }
+        User user = this.userService.getById(instant.getUserId());
+        instantDTO.setNickname(user.getNickname());
+        instantDTO.setAvatar(user.getAvatar());
         return instantDTO;
     }
 }

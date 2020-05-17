@@ -26,6 +26,8 @@ public class UserZoneDTO {
     private String avatar;
     // 用户地址
     private String address;
+    // 用户介绍
+    private String introduction;
     // 用户动态列表
     List<InstantDTO> instantDTOList;
 }

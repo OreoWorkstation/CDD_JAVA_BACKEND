@@ -42,6 +42,7 @@ public class InstantController extends ApiController {
     private UserService userService;
     @Resource
     private LikeService likeService;
+
     @Autowired
     private UserController userController;
 
@@ -178,9 +179,12 @@ public class InstantController extends ApiController {
         int cnt = this.likeService.count(likeQueryWrapper);
         if(cnt == 0){
             instantDTO.setStatus(0);
-        }else{
+        }else {
             instantDTO.setStatus(1);
         }
+        User user = this.userService.getById(instant.getUserId());
+        instantDTO.setNickname(user.getNickname());
+        instantDTO.setAvatar(user.getAvatar());
         return instantDTO;
     }
 }

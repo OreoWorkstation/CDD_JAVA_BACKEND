@@ -7,8 +7,24 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 3
+      max-lifetime: 30000
+      maximum-pool-size: 10
+      connection-test-query: SELECT 1
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
 
 # 配置日志  输出到控制台
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 七牛云
+upload:
+  domain: http://static.scotty.ink
+  access-key: 5gH9s8HjIQpv7MPuxVq_LDD8oZxwxkQyQfigLEHi
+  secret-key: OZkrYz0lY9LaJeRCBXKEkt-5LGnOfJ80ZSLkXW4x
+  bucket: cat-dog-diary
