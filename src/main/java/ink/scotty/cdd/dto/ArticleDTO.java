@@ -16,6 +16,12 @@ import java.util.Date;
 public class ArticleDTO {
     //主键
     private Long id;
+    //专家ID
+    private Long expertId;
+    // 专家昵称
+    private String expertName;
+    // 专家头像
+    private String expertAvatar;
     //文章标题
     private String title;
     //文章缩略图

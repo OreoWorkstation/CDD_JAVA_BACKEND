@@ -12,14 +12,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
  * (Article)表实体类
  *
  * @author Scott
- * @since 2020-05-19 16:26:18
+ * @since 2020-05-19 23:15:55
  */
 @SuppressWarnings("serial")
-@TableName(value="t_article")
+@TableName(value="t_browse")
 public class Article extends Model<Article> {
     @TableId(type = IdType.AUTO)
     //主键
     private Long id;
+    //专家ID
+    private Long expertId;
     //文章标题
     private String title;
     //文章缩略图
@@ -40,6 +42,14 @@ public class Article extends Model<Article> {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getExpertId() {
+        return expertId;
+    }
+
+    public void setExpertId(Long expertId) {
+        this.expertId = expertId;
     }
 
     public String getTitle() {
