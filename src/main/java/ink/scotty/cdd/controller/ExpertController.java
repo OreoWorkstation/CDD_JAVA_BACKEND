@@ -18,6 +18,7 @@ import java.util.List;
  * (Expert)表控制层
  *
  * @author Scott
+ * @Author Kai
  * @since 2020-05-19 15:43:02
  */
 @RestController
@@ -53,15 +54,35 @@ public class ExpertController extends ApiController {
     }
 
     /**
-     * 新增数据
-     *
+     * 1. 注册
      * @param expert 实体对象
      * @return 新增结果
      */
-    @PostMapping
+    @PostMapping("register")
     public R<?> insert(@RequestBody Expert expert) {
         return success(this.expertService.save(expert));
     }
+
+    /**
+     * 2. 登陆
+     * @param expert 实体对象
+     * @return 新增结果
+     */
+    @PostMapping("login")
+    public R<?> login(@RequestBody Expert expert) {
+        QueryWrapper<Expert> wrapper = new QueryWrapper<Expert>();
+        wrapper
+                .eq("account", expert.getAccount())
+                .eq("password", expert.getPassword());
+        int cnt = this.expertService.count(wrapper);
+        if(cnt != 0){
+            Expert res = this.expertService.getOne(wrapper);
+            return success(res.getId());
+        }else{
+            return failed("用户名与密码不匹配");
+        }
+    }
+
 
     /**
      * 修改数据
@@ -76,7 +97,6 @@ public class ExpertController extends ApiController {
 
     /**
      * 删除数据
-     *
      * @param idList 主键结合
      * @return 删除结果
      */
