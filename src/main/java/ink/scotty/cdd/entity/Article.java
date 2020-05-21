@@ -12,10 +12,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
  * (Article)表实体类
  *
  * @author Scott
+ * @author Kai
  * @since 2020-05-19 23:15:55
  */
 @SuppressWarnings("serial")
-@TableName(value="t_browse")
+@TableName(value="t_article")
 public class Article extends Model<Article> {
     @TableId(type = IdType.AUTO)
     //主键

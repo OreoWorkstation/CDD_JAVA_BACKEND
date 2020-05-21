@@ -2,7 +2,9 @@ package ink.scotty.cdd.controller;
 
 
 
+import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,6 +20,7 @@ import java.util.List;
  * (Browse)表控制层
  *
  * @author Scott
+ * @author Kai
  * @since 2020-05-19 15:44:07
  */
 @RestController
@@ -58,10 +61,10 @@ public class BrowseController extends ApiController {
      * @param browse 实体对象
      * @return 新增结果
      */
-    @PostMapping
-    public R<?> insert(@RequestBody Browse browse) {
-        return success(this.browseService.save(browse));
-    }
+//    @PostMapping
+//    public R<?> insert(@RequestBody Browse browse) {
+//        return success(this.browseService.save(browse));
+//    }
 
     /**
      * 修改数据
@@ -83,5 +86,27 @@ public class BrowseController extends ApiController {
     @DeleteMapping
     public R<?> delete(@RequestParam("idList") List<Long> idList) {
         return success(this.browseService.removeByIds(idList));
+    }
+
+    /**
+     * 用户浏览文章
+     * @param browse
+     * @return
+     */
+    @PostMapping
+    public R<?> Userbrowse(@RequestBody Browse browse){
+        QueryWrapper<Browse> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", browse.getUserId())
+                .eq("article_id", browse.getArticleId());
+        int cnt = this.browseService.count(queryWrapper);
+
+        UpdateWrapper<Browse> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("user_id", browse.getUserId())
+                .eq("article_id", browse.getArticleId());
+        if(cnt == 1){
+            return success(this.browseService.update(browse,updateWrapper));
+        }else{
+            return success(this.browseService.save(browse));
+        }
     }
 }
