@@ -127,15 +127,18 @@ public class ArticleController extends ApiController {
         QueryWrapper<Recommend> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user_id);
         List<Recommend> recommendList = new ArrayList<>();
-        recommendList = this.recommendService.list(queryWrapper);
-        //返回DTOList
         List<ArticleDTO> articleDTOS = new ArrayList<>();
-        List<Long> articleids = new ArrayList<>();   // 记录文章id的list
-        for(Recommend recommend: recommendList){
-            articleDTOS.add(getArticleDTO(recommend.getArticleId(), user_id));
-            articleids.add(recommend.getArticleId());
+        List<Long> articleids = new ArrayList<>(); // 记录文章id的list
+        int cnt = this.recommendService.count(queryWrapper);
+        if(cnt != 0){
+            //返回DTOList
+            recommendList = this.recommendService.list(queryWrapper);
+            for(Recommend recommend: recommendList){
+                articleDTOS.add(getArticleDTO(recommend.getArticleId(), user_id));
+                articleids.add(recommend.getArticleId());
+            }
         }
-
+        articleids.add((long) 0);
         //若推荐文章少于10篇，则从文章序列中添加若干篇文章
         if(articleDTOS.size() < 10){
             QueryWrapper<Article> articleQueryWrapper = new QueryWrapper<>();
@@ -148,7 +151,6 @@ public class ArticleController extends ApiController {
             }else{
                 len = articleList.size();
             }
-
             for(int i = 0 ; i < len; ++ i){
                 Article article = articleList.get(i);
                 articleDTOS.add(getArticleDTO(article.getId(), user_id));
