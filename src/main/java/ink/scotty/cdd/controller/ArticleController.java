@@ -8,9 +8,11 @@ import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ink.scotty.cdd.dto.ArticleDTO;
 import ink.scotty.cdd.entity.Article;
+import ink.scotty.cdd.entity.Browse;
 import ink.scotty.cdd.entity.Expert;
 import ink.scotty.cdd.entity.Recommend;
 import ink.scotty.cdd.service.ArticleService;
+import ink.scotty.cdd.service.BrowseService;
 import ink.scotty.cdd.service.ExpertService;
 import ink.scotty.cdd.service.RecommendService;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -40,6 +42,8 @@ public class ArticleController extends ApiController {
     private ExpertService expertService;
     @Resource
     private RecommendService recommendService;
+    @Resource
+    private BrowseService browseService;
 
     /**
      * 1. 添加文章
@@ -72,11 +76,12 @@ public class ArticleController extends ApiController {
         queryWrapper.eq("expert_id",expert_id);
         return getR(queryWrapper);
     }
+
     private R<?> getR(QueryWrapper<Article> queryWrapper) {
         List<Article> articles = this.articleService.list(queryWrapper);
         List<ArticleDTO> articleDTOS = new ArrayList<>();
         for(Article article: articles){
-            articleDTOS.add(getArticleDTO(article.getId()));
+            articleDTOS.add(getArticleDTO(article.getId(), (long) 0));
         }
         return success(articleDTOS);
     }
@@ -88,19 +93,27 @@ public class ArticleController extends ApiController {
      */
     @GetMapping("{article_id}")
     public R<?> selectOne(@PathVariable Long article_id) {
-        return success(getArticleDTO(article_id));
+        return success(getArticleDTO(article_id, (long) 0));
     }
 
     /**
      * 5. 用户按照分类获取文章列表
      * @param category
+     * @param user_id
      * @return
      */
     @GetMapping("/category/{category}")
-    public R<?> selectByCategory(@PathVariable int category){
+    public R<?> selectByCategory(@PathVariable int category, @RequestParam("user_id") Long user_id){
         QueryWrapper<Article> articleQueryWrapper = new QueryWrapper<>();
         articleQueryWrapper.eq("category", category);
-        return getR(articleQueryWrapper);
+        List<Article> articleList = new ArrayList<>();
+        articleList = this.articleService.list(articleQueryWrapper);
+
+        List<ArticleDTO> articleDTOList = new ArrayList<>();
+        for(Article article: articleList){
+            articleDTOList.add(getArticleDTO(article.getId(), user_id));
+        }
+        return success(articleDTOList);
     }
 
     /**
@@ -114,15 +127,18 @@ public class ArticleController extends ApiController {
         QueryWrapper<Recommend> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user_id);
         List<Recommend> recommendList = new ArrayList<>();
-        recommendList = this.recommendService.list(queryWrapper);
-        //返回DTOList
         List<ArticleDTO> articleDTOS = new ArrayList<>();
-        List<Long> articleids = new ArrayList<>();   // 记录文章id的list
-        for(Recommend recommend: recommendList){
-            articleDTOS.add(getArticleDTO(recommend.getArticleId()));
-            articleids.add(recommend.getArticleId());
+        List<Long> articleids = new ArrayList<>(); // 记录文章id的list
+        int cnt = this.recommendService.count(queryWrapper);
+        if(cnt != 0){
+            //返回DTOList
+            recommendList = this.recommendService.list(queryWrapper);
+            for(Recommend recommend: recommendList){
+                articleDTOS.add(getArticleDTO(recommend.getArticleId(), user_id));
+                articleids.add(recommend.getArticleId());
+            }
         }
-
+        articleids.add((long) 0);
         //若推荐文章少于10篇，则从文章序列中添加若干篇文章
         if(articleDTOS.size() < 10){
             QueryWrapper<Article> articleQueryWrapper = new QueryWrapper<>();
@@ -135,10 +151,9 @@ public class ArticleController extends ApiController {
             }else{
                 len = articleList.size();
             }
-
             for(int i = 0 ; i < len; ++ i){
                 Article article = articleList.get(i);
-                articleDTOS.add(getArticleDTO(article.getId()));
+                articleDTOS.add(getArticleDTO(article.getId(), user_id));
             }
         }
         return success(articleDTOS);
@@ -149,7 +164,7 @@ public class ArticleController extends ApiController {
      * @return
      */
     @GetMapping("hot")
-    public R<?> selectHotArticle(){
+    public R<?> selectHotArticle(@RequestParam("user_id") Long user_id){
         QueryWrapper<Article> wrapper = new QueryWrapper<>();
         wrapper.orderByAsc("create_time");
         List<Article> articles = new ArrayList<>();
@@ -158,7 +173,7 @@ public class ArticleController extends ApiController {
         List<ArticleDTO> articleDTOS = new ArrayList<>();
         for(int i = 0; i < 4; ++ i){
             System.out.println(i);
-            articleDTOS.add(getArticleDTO(articles.get(i).getId()));
+            articleDTOS.add(getArticleDTO(articles.get(i).getId(), user_id));
         }
 
         return success(articleDTOS);
@@ -181,7 +196,7 @@ public class ArticleController extends ApiController {
      * @param article_id
      * @return
      */
-    private ArticleDTO getArticleDTO(Long article_id){
+    private ArticleDTO getArticleDTO(Long article_id, Long userId){
         //判断文章是否存在
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", article_id);
@@ -212,7 +227,20 @@ public class ArticleController extends ApiController {
         articleDTO.setTitle(article.getTitle());
         articleDTO.setContent(article.getContent());
         articleDTO.setCategory(article.getCategory());
-        articleDTO.setBrowseValue(0);
+        if(userId == 0)
+            articleDTO.setBrowseValue(0);
+        else{
+            QueryWrapper<Browse> browseQueryWrapper = new QueryWrapper<>();
+            browseQueryWrapper.eq("user_id", userId)
+                    .eq("article_id", article_id);
+            int browse_val = this.browseService.count(browseQueryWrapper);
+            if(browse_val == 0)  // 用户没有看过
+                articleDTO.setBrowseValue(0);
+            else{
+                Browse browse = this.browseService.getOne(browseQueryWrapper);
+                articleDTO.setBrowseValue(browse.getBrowseValue());
+            }
+        }
         articleDTO.setUpdateTime(article.getUpdateTime());
         articleDTO.setCreateTime(article.getCreateTime());
 
