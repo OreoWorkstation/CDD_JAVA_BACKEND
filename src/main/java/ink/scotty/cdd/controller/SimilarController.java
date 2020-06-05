@@ -44,6 +44,25 @@ public class SimilarController extends ApiController {
         // 获取文章是那一个type
         QueryWrapper<Similar> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article", article_id);
+
+        //判断t_similar表中是否有article_id的文章
+        int cnt = this.similarService.count(queryWrapper);
+        if(cnt == 0){ //若没有 随机推荐
+            QueryWrapper<Article> wrapper = new QueryWrapper<>();
+            wrapper.orderByDesc("create_time")
+                    .notIn("id", article_id);
+            List<Article> articles = new ArrayList<>();
+            articles = this.articleService.list(wrapper);
+
+            List<ArticleDTO> articleDTOS = new ArrayList<>();
+            for(int i = 0; i < 5; ++ i){
+                System.out.println(i);
+                articleDTOS.add(getArticleDTO(articles.get(i).getId(), user_id));
+            }
+
+            return success(articleDTOS);
+        }
+
         Similar similar = this.similarService.getOne(queryWrapper);
         Long type = similar.getType();
 
@@ -53,14 +72,16 @@ public class SimilarController extends ApiController {
                 .notIn("article", article_id);
         List<Similar> similarList = this.similarService.list(queryWrapper2);
 
+
+
         //最多推荐5篇相似的文章
         List<ArticleDTO> articleDTOS = new ArrayList<>();
-        int cnt = 0;
+        int cnt_a = 0;
         for(Similar similar_i: similarList){
-            if(cnt == 5)
+            if(cnt_a == 5)
                 break;
-            articleDTOS.add(getArticleDTO(article_id, user_id));
-            cnt ++;
+            articleDTOS.add(getArticleDTO(similar_i.getArticle(), user_id));
+            cnt_a ++;
         }
         return success(articleDTOS);
     }
@@ -122,6 +143,11 @@ public class SimilarController extends ApiController {
     }
 
 
+    /**
+     * 自定义函数：按照文章id获取ArticleDTO
+     * @param article_id
+     * @return
+     */
     private ArticleDTO getArticleDTO(Long article_id, Long userId){
         //判断文章是否存在
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
