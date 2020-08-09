@@ -1,20 +1,14 @@
 package ink.scotty.cdd.service;
 
-import ink.scotty.cdd.pojo.Diary;
+import com.baomidou.mybatisplus.extension.service.IService;
+import ink.scotty.cdd.entity.Diary;
 
-import java.util.List;
+/**
+ * (Diary)表服务接口
+ *
+ * @author Scott
+ * @since 2020-04-21 22:40:09
+ */
+public interface DiaryService extends IService<Diary> {
 
-public interface DiaryService {
-
-    // 添加日记
-    Diary addDiary(Diary diary);
-
-    // 删除日记
-    int deleteDiary(int diaryId, int petId);
-
-    // 获取所有日记
-    List<Diary> getAllDiaries(int petId);
-
-    // 修改日记信息
-    void updateDiary(Diary diary);
 }
